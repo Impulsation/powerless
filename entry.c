@@ -58,10 +58,6 @@ int main () {
   InitWindow(window_width, window_height, "ooga");
   SetTargetFPS(60);
 
-  camera.rotation = 0.0f;
-  camera.offset = (Vector2) {window_width/2.0f, window_height/2.0f};
-  camera.zoom = 2.0f;
-
   sprite[SPRITE_PLAYER] = LoadTexture("res/sprites/player.png");
   sprite[SPRITE_PLAYER_CROUCH] = LoadTexture("res/sprites/player_crouch.png");
   sprite[SPRITE_VOID] = LoadTexture("res/sprites/void.png");
@@ -73,6 +69,10 @@ int main () {
   sprite[SPRITE_ORE] = LoadTexture("res/sprites/ore.png");
   sprite[SPRITE_PUDDLE] = LoadTexture("res/sprites/puddle.png");
   sprite[SPRITE_ORB] = LoadTexture("res/sprites/orb.png");
+
+  camera.rotation = 0.0f;
+  camera.offset = (Vector2) {window_width/2.0f, window_height/2.0f};
+  camera.zoom = 2.0f;
 
   Entity player = {
     .position =  (Vector2) {100, 100},
@@ -110,10 +110,11 @@ int main () {
     else if (IsKeyDown(KEY_S)) {
       move_dir = 1;
       if (player.facing != 1) player.facing = 1;
-     }
+    }
     if (IsKeyDown(KEY_R)) player.anim = SPRITE_PLAYER_CROUCH;
     else player.anim = SPRITE_PLAYER;
     // if (IsKeyDown(KEY_SPACE))
+
     jumping = false;
     if (IsKeyDown(KEY_W)) jumping = true;
 
@@ -133,8 +134,6 @@ int main () {
 
     BeginDrawing();
     ClearBackground(COLOR_BACKGROUND);
-
-
     BeginMode2D(camera);
     DrawLine(100, 0, 100, window_height, RAYWHITE);
     DrawRectangle(0, 114, window_width, window_height/2, COLOR_EARTH);
