@@ -41,15 +41,28 @@ typedef enum Sprite {
   SPRITE_MAX,
 } Sprite;
 
+typedef enum JumpState {
+  JUMP_DISABLED,
+  JUMP_AVAILABLE,
+  JUMP_ASCENDING,
+  JUMP_DESCENDING,
+  JUMP_FASTFALL,
+} JumpState;
+
 // :debug
 bool debug = true;
 bool ui_open = false;
 int ui_menu = 0; // character, map, crafting, skill, etc
 
+// :tweaks
+const float run_speed = 100.0f;
+
 float velocity;
 int move_dir;
 bool decelerating;
+int jump_state;
 bool jumping;
+int jump_count;
 
 Texture2D sprite[SPRITE_MAX];
 Camera2D camera;
@@ -119,13 +132,21 @@ int main () {
     if (IsKeyDown(KEY_W)) jumping = true;
 
     // :update
-    if (move_dir == 1) player.position.x += 1;
-    if (move_dir == -1) player.position.x -= 1;
-    if (jumping) {
-      player.position.y -= 10;
+    if (move_dir == 1) player.position.x += run_speed * delta_t;
+    if (move_dir == -1) player.position.x -= run_speed * delta_t;
+
+    // :jump :gravity
+    if (jumping && jump_state == JUMP_AVAILABLE || jump_state == JUMP_ASCENDING) {
+      player.position.y -= 400 * delta_t;
+      jump_count += 1;
+      if (jump_count >= 8) jump_state = JUMP_DESCENDING;
     }
     else if (player.position.y < 100) {
-      player.position.y += 2;
+      player.position.y += 100 * delta_t;
+    }
+    else {
+      jump_state = JUMP_AVAILABLE;
+      jump_count = 0;
     }
     camera.target.x = player.position.x;
     camera.target.y = player.position.y;
